@@ -38,11 +38,13 @@ env :
 
 train : 
   n_budget_step : 100_000_000
-  wandb_mode : online # online offlie disabled
+  wandb_mode : online # online offline disabled
+  agent : uniform
 
 
 
 defaults:
+  - _self_
   - scene: franka_ycb 
   - command: franka_effort
  

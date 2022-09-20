@@ -9,24 +9,7 @@ import torch
 import wandb
 import time
 from hydra.core.hydra_config import HydraConfig
-
-
-class Orn_Uhlen:
-    def __init__(self, n_actions, mu=0, theta=0.15, sigma=0.2):
-        self.n_actions = n_actions
-        self.X = np.ones(n_actions) * mu
-        self.mu = mu
-        self.sigma = sigma
-        self.theta = theta
-
-    def reset(self):
-        self.X = np.ones(self.n_actions) * self.mu
-
-    def sample(self):
-        dX = self.theta * (self.mu - self.X)
-        dX += self.sigma * np.random.randn(self.n_actions)
-        self.X += dX
-        return torch.FloatTensor(self.X)
+from utils import Orn_Uhlen
 
 
 def update_episode_action_tensor(
@@ -106,10 +89,15 @@ def main_loop(cfg):
     noise_gen = Orn_Uhlen(grasp_env.num_envs * grasp_env.num_actions)
     while n_step_done < n_budget_step:
         n_step_done += grasp_env.num_envs
-        # actions = np.random.uniform(-1, 1, (grasp_env.num_envs, grasp_env.num_actions))
-        actions = (noise_gen.sample() - noise_gen.sample()).reshape(
-            grasp_env.num_envs, grasp_env.num_actions
-        )
+        #
+        if cfg["train"]["agent"] == "uniform":
+            actions = np.random.uniform(
+                -1, 1, (grasp_env.num_envs, grasp_env.num_actions)
+            )
+        elif cfg["train"]["agent"] == "orn_uhlen":
+            actions = (noise_gen.sample() - noise_gen.sample()).reshape(
+                grasp_env.num_envs, grasp_env.num_actions
+            )
         actions = to_torch(actions, device=grasp_env.rl_device)
         # if episode_actions[-1, ...].max()> 0:
         #     actions = episode_actions[grasp_env.progress_buf[0], ...]
