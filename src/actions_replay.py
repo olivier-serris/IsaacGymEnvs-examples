@@ -9,17 +9,24 @@ import torch
 import time
 from hydra.core.hydra_config import HydraConfig
 import wandb
+import json
 
 
 @hydra.main(config_path=f"{os.getcwd()}/configs/", config_name="main_config.yaml")
-def main_loop(cfg):
+def main_loop(project_cfg):
     api = wandb.Api()
-    run = api.run("oserris/Isaac-Manipulation/3qcx4py1")  # bad grasp : 3qcx4py1
+    run = api.run("oserris/Isaac-Manipulation/1wenuuiq")  # grasp : 1jknqajl 1wenuuiq
     run.file("best_actions").download(replace=True)
     best_actions = torch.load("best_actions")
 
-    cfg = OmegaConf.to_container(cfg, resolve=True)
-    cfg["env"]["numEnvs"] = 1
+    # try to load the config from the run you want to replay.
+    try:
+        run.file("best_actions").download(replace=True)
+        cfg = json.load(open("config"))
+    except:
+        cfg = OmegaConf.to_container(project_cfg, resolve=True)
+
+    cfg["env"]["numEnvs"] = 100
 
     env_class = task_map[cfg["env_name"]]
     grasp_env = env_class(

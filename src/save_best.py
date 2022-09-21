@@ -1,3 +1,4 @@
+from copyreg import pickle
 import isaacgym  # importing isaac_gym before torch is mandatory.
 import os
 from isaac_gym_manipulation.envs import task_map
@@ -10,6 +11,7 @@ import wandb
 import time
 from hydra.core.hydra_config import HydraConfig
 from utils import Orn_Uhlen
+import json
 
 
 def update_episode_action_tensor(
@@ -70,6 +72,10 @@ def main_loop(cfg):
         entity="oserris",
         mode=cfg["train"]["wandb_mode"],
     )
+    config_save_path = os.path.join(wandb.run.dir, "config")
+    with open(config_save_path, mode="w") as f:
+        json.dump(cfg, f)
+    wandb.save(f"config")
 
     start = time.time()
     creward = torch.zeros(grasp_env.num_envs, device=grasp_env.rl_device)
