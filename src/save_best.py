@@ -1,4 +1,3 @@
-from copyreg import pickle
 import isaacgym  # importing isaac_gym before torch is mandatory.
 import os
 from isaac_gym_manipulation.envs import task_map
