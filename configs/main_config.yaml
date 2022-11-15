@@ -27,7 +27,7 @@ sim :
 
 
 env : 
-  numEnvs : 1000
+  numEnvs : 16
   episodeLength : 200
   numObservations : 7 # will be hard coded in env for next iterations.
   envSpacing : 2 # will be hard coded in env for next iterations
@@ -46,5 +46,5 @@ train :
 defaults:
   - _self_
   - scene: franka_ycb 
-  - command: franka_effort
+  - command: franka_dof_abs
  

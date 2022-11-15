@@ -7,7 +7,4 @@ franka :
     dof_range : [0,9]
     pd_values : ${scene.asset_dir}/pd_controllers/franka_dof_pids.yaml
     action_pre_process : 
-      _target_: isaac_gym_manipulation.command.action_pre_process.DOF_TranslationActProcessing
-      action_scale : 7.5
-      dof_speed_scale : [1, 1, 1, 1, 1, 1, 1, 0.1, 0.1 ]
-
+      _target_: isaac_gym_manipulation.command.action_pre_process.DOF_PositionActProcessing
